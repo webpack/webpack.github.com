@@ -1,0 +1,164 @@
+/*
+ * http://meyerweb.com/eric/tools/css/reset/
+ * v2.0 | 20110126
+ * License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+html {
+	width: 100%;
+}
+body {
+	line-height: 1;
+	border-width: 0px !important;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* ========================================== */
+
+.will-fade {
+	-webkit-transition: opacity 1s;
+	-moz-transition:    opacity 1s;
+	-ms-transition:     opacity 1s;
+	-o-transition:      opacity 1s;
+	transition:         opacity 1s;
+
+	opacity: 0;
+}
+.do-fade {
+	opacity: 1;
+}
+
+
+/* ========================================== */
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 20px;
+	background-color: #eee;
+	-webkit-font-smoothing: antialiased;
+	-webkit-transform: translate3d(0,0,1px);
+	-moz-transform:    translate3d(0,0,1px);
+	-ms-transform:     translate3d(0,0,1px);
+	-o-transform:      translate3d(0,0,1px);
+	transform:         translate3d(0,0,1px);
+}
+h1 { font-size: 150%; font-weight: 800; }
+h2 { font-size: 140%; font-weight: 700; }
+h3 { font-size: 130%; font-weight: 700; }
+h4 { font-size: 120%; font-weight: 700; }
+h5 { font-size: 110%; font-weight: 700; }
+p { font-size: 100%; }
+ul { padding-left: 20px; }
+li { font-size: 20px; list-style: circle; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+pre { font-family: monospace; font-size: 20px; }
+code { font-family: monospace; }
+
+section {
+	width: 980px;
+	height: 640px;
+	padding: 40px;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	-ms-box-sizing:     border-box;
+	-o-box-sizing:      border-box;
+	box-sizing:         border-box;
+	
+	line-height: 1.5;
+	font-size: 30px;
+
+	pointer-events: auto;
+}
+
+.jmpress-only {
+	display: none;
+}
+
+.jmpress-initialized .jmpress-only {
+	display: block;
+}
+
+.global-next, .global-prev {
+	position: fixed;
+	bottom: 50%;
+	display: block;
+	padding: 0px;
+	background: #333;
+	border-radius: 100%;
+	width: 100px;
+	height: 100px;
+	cursor: pointer;
+
+	pointer-events: auto;
+}
+
+.global-prev {
+	left: -50px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+
+.global-next {
+	right: -50px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+footer {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	padding: 5px;
+}
+
+.strike-if-on.on {
+	text-decoration: line-through;
+}
+
+.strike-if-off.off {
+	text-decoration: line-through;
+}
+
+

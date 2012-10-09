@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>webpack module system</title>
+
+	<meta name="author" content="Tobias Koppers" />
+	<meta name="viewport" content="width=device-width, maximum-scale=1.0, initial-scale=1.0, user-scalable=no" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,800italic,400,800,700' rel='stylesheet' type='text/css'>
+	<link href="assets/style.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/jmpress.custom.min.js"></script>
+
+	<script type="text/javascript">
+		$(function($) {
+			$.jmpress("template", "main", {
+				children: function(idx) {
+					return {
+						x: idx * 1200,
+						y: Math.floor(Math.sin(idx * Math.PI / 8) * 1000)
+					}
+				}
+			});
+			var article = $("article")
+			article.jmpress({
+				stepSelector: "section",
+				viewPort: {
+					width: 980,
+					height: 640,
+					maxScale: 1
+				},
+				afterInit: function() {
+					article.addClass("jmpress-initialized")
+				}
+			});
+			$(".next").on("click", function() {
+				article.jmpress("next");
+				return false;
+			});
+			$(".prev").on("click", function() {
+				article.jmpress("prev");
+				return false;
+			});
+			$(".home").on("click", function() {
+				article.jmpress("home");
+				return false;
+			});
+		});
+
+		/* jmpress-choose-route plugin */
+		$.jmpress("beforeChange", function(el, eventData) {
+			if(eventData.reason != "next") return;
+			var chooser = null;
+			$(".jmpress-choose-route").each(function() {
+				if(el.is($(this).data("slice")) && $(this).is(":checked"))
+					chooser = $(this);
+			});
+			if(chooser) {
+				eventData.cancel();
+				$(eventData.jmpress).jmpress("select", chooser.data("goto"), "next");
+			}
+		});
+		$(function() {
+			$(".jmpress-choose-route").each(function() {
+				var item = $(this);
+				function update() {
+					var checked = item.is(":checked");
+					var className = item.data("class");
+					$("." + className + "-on").toggle(!!checked);
+					$("." + className + "-off").toggle(!checked);
+					$("." + className + "-class").removeClass(checked?"off":"on").addClass(checked?"on":"off");
+				}
+				update();
+				item.on("change", update);
+			});
+		});
+	</script>
+</head>
+<body>
+
+<div class="global-wip">
+	<h1>Work In Progress</h1>
+	<p>While <code>webpack</code> is some kind of mature, this presentation is wip!</p>
+</div>
+
+<article data-template="main">
+
+	<section id="home">
+		<center><img src="assets/logo.png" /></center>
+		<p>Hi, I'm a <strong>module system</strong>.</p>
+		<p>You like to get know me? I'll tell you more.</p>
+		<p data-jmpress="fade after 700ms step" class="jmpress-only">You can navigate through this website with</p>
+		<ul>
+		<li data-jmpress="fade after 500ms">your arrow keys (&larr;, &rarr;),</li>
+		<li data-jmpress="fade after 500ms">the space bar or</li>
+		<li data-jmpress="fade after 500ms">the buttons on the left and the right of the screen.</li>
+		</ul>
+		<p data-jmpress="fade after 1s">Yeah. Ready to get to know webpack: Go <strong>right</strong> &rarr;!
+	</section>
+
+	<section>
+		<h1>Customize the content</h1>
+		<p>Answer these few questions so <br/>I can present you relevant stuff only:</p>
+		<ul>
+			<li>Are you a <code>javascript</code> developer? If not, leave this website, the content is not relevant to you.</li>
+			<li>Do you know <code>node.js</code>? I hope so. Elsewise read <a href="http://nodejs.org" target="_blank">nodejs.org</a>.</li>
+			<li>Do you know <code>CommonJS</code> and <code>AMD</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#module-system-style" data-goto="#existing-module-systems" data-class="commonjs"/>. Elsewise I've some slides for you.</li>
+			<li>Do you know <code>browserify</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="browserify" checked="checked"/>. I'll show you the differences.</li>
+			<li>Do you know <code>require.js</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="requirejs" checked="checked"/>. I'll compare it with me to.</li>
+			<li>Do you know <code>jade</code> templating language? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="jade" checked="checked"/>. I'll show you how to use it with me.</li>
+			<li>Do you know <code>less</code> stylesheets? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="less" checked="checked"/>. I'll explain why you can use it with just one line.</li>
+			<li>Do you know <code>coffeescript</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="coffeescript" checked="checked"/>. I'll prove that you can use it as full replacement of js.</li>
+			<li>Do you know <code>express</code> server? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="express" checked="checked"/>. I've some slide showing how to integrate the dev tools.</li>
+		</ul>
+	</section>
+
+	<section id="content">
+		<h1>Content</h1>
+		<ul>
+		<li>Todays Web Apps: Motivation</li>
+		<li class="commonjs-class strike-if-on">Module system styles</li>
+		<li>Existing module systems</li>
+		<li>Transferring. Simple concatination?</li>
+		<li>Why only javascript? More static resources.</li>
+		<li>Loaders</li>
+		<li class="browserify-class strike-if-off">Differences to <code>browserify</code></li>
+		<li class="requirejs-class strike-if-off">Differences to <code>require.js</code></li>
+		<li>Useage</li>
+		<li>Dev Tools</li>
+		<li>More info</li>
+		</ul>
+	</section>
+
+	<section id="motivation">
+		<h1>Todays Web Apps: Motivation</h1>
+		<p>Today websites are evolving into web apps:</p>
+		<ul>
+		<li>More and more javascript is in a page.</li>
+		<li>One can do more stuff in modern browsers.</li>
+		<li>Less full page reloads &rarr; even more code in a page.</li>
+		</ul>
+		<p>&rarr; Much code on client side!</p>
+		<h2>Module system</h2>
+		<p>A big code base need to be organized!</p>
+		<p>Module systems offer mechanism to split your code base into modules.</p>
+	</section>
+
+	<section id="module-system-style">
+		<h1>Module system styles</h1>
+		<p>Using a module system is common, so there is a standard. But of course there is not only one standard. There are multiple different standards:</p>
+		<ul>
+		<li><code>&lt;script&gt;</code>-tag style</li>
+		<li>CommonJS</li>
+		<li>AMD and some dialects of it</li>
+		<li>...</li>
+		<ul>
+	</section>
+
+	<section id="style-tag-style">
+		<h1><code>&lt;script&gt;</code>-tag style</h1>
+<pre>&lt;script src="module1.js&gt;&lt;/script&gt;
+&lt;script src="module2.js&gt;&lt;/script&gt;
+&lt;script src="libaryA.js&gt;&lt;/script&gt;
+&lt;script src="module3.js&gt;&lt;/script&gt;</pre>
+		<p>Modules export a interface to the global object, i. e. <code>window</code>.</p>
+		<h3>Common problems:</h3>
+		<ul>
+		<li>Conflicts in the global object</li>
+		<li>Order is important</li>
+		<li>Developer have to resolve dependencies of thrid-party modules/libaries</li>
+		<li>In big projects the list can get really long, difficult to manage</li>
+		</ul>
+	</section>
+
+
+	<section id="commonjs-style">
+		<h1>CommonJS: synchron require</h1>
+		<p>This is the style you use in <code>node.js</code> on server side.</p>
+		<pre>require("module"); require("../file.js");</pre>
+		<h3>Pro</h3>
+		<ul>
+		<li>Reuse server-side modules, npm</li>
+		<li>There are already many modules in this style</li>
+		<li>very simple</li>
+		</ul>
+		<h3>Contra</h3>
+		<ul>
+		<li>blocking calls do not apply well on networks. Requests are asynchronous.</li>
+		<li>No parallel require of multiple modules</li>
+		</ul>
+	</section>
+
+
+	<section id="amd-style">
+		<h1>AMD: asynchronous require</h1>
+		<p><code>Asynchronous Module Definition</code></p>
+		<p>Other module system had problems with the synchron require and introduces a asynchronous require:</p>
+		<pre>require(["module", "../file.js"], function(modules, file) { /*...*/ });
+define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
+		<h3>Pro</h3>
+		<ul>
+		<li>Fits the asynchronous request style</li>
+		<li>Parallel loading of multiple modules</li>
+		</ul>
+		<h3>Contra</h3>
+		<ul>
+		<li>Coding overhead</li>
+		<li>Seem to be some kind of workaround</li>
+		</ul>
+	</section>
+
+	<section id="existing-module-systems">
+		<h1>Existing module systems</h1>
+		<h3>CommonJS</h3>
+		<ul>
+		<li><a target="_blank" href="http://nodejs.org">node.js</a> - only server-side</li>
+		<li><a target="_blank" href="https://github.com/substack/node-browserify">browserify</a> - compile to one bundle</li>
+		<li><a target="_blank" href="https://github.com/medikoo/modules-webmake">modules-webmake</a> - compile to one bundle</li>
+		<li><a target="_blank" href="https://github.com/substack/wreq">wreq</a> - fully client-side</li>
+		</ul>
+		<p class="browserify-on">As you know browserify, I'll compare it to me on a later slide.</p>
+		<h3>AMD</h3>
+		<ul>
+		<li><a target="_blank" href="http://requirejs.org/">require.js</a> - fully client-side</li>
+		<li><a target="_blank" href="https://github.com/cujojs/curl">curl</a> - fully client-side</li>
+		</ul>
+		<p class="requirejs-on">You know require.js, which will be compared to me later.</p>
+	</section>
+
+	<section id="">
+		<h1>WIP</h1>
+	</section>
+
+</article>
+
+<div class="jmpress-only global-prev prev"></div>
+<div class="jmpress-only global-next next"></div>
+
+<footer><p>
+	<g:plusone href="http://webpack.github.com/"></g:plusone>
+</p></footer>
+
+<script type="text/javascript">
+
+(function() {
+	var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	po.src = 'https://apis.google.com/js/plusone.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-35439060-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>
