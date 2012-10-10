@@ -21,7 +21,13 @@
 				children: function(idx) {
 					return {
 						x: idx * 1200,
-						y: Math.floor(Math.sin(idx * Math.PI / 8) * 1000)
+						y: Math.floor(Math.sin(idx * Math.PI / 8) * 1000),
+						children: function(subidx) {
+							return {
+								y: subidx * 1000 + 1000,
+								x: subidx * 500 + Math.floor(Math.sin(subidx * Math.PI / 8) * 1000)
+							}
+						}
 					}
 				}
 			});
@@ -35,7 +41,32 @@
 				},
 				afterInit: function() {
 					article.addClass("jmpress-initialized")
+				},
+				keyboard: {
+					keys: {
+						38: "up",
+						40: "down"
+					}
+				},
+				setActive: function(el) {
+					$(".global-down")[$(el).children( "section" ).length > 0 ? "addClass" : "removeClass"]("active")
 				}
+			});
+			$.jmpress("register", "down", function() {
+				var active = $(this).jmpress("active");
+				var item = active.children( $(this).jmpress("settings").stepSelector ).first();
+				if(item && item.length > 0) {
+					$(this).jmpress("select", item, "next");
+				} else
+					$(this).jmpress("next");
+			});
+			$.jmpress("register", "up", function() {
+				var active = $(this).jmpress("active");
+				var item = active.parent();
+				if(item && item.length > 0 && item.is( $(this).jmpress("settings").stepSelector )) {
+					$(this).jmpress("select", item, "prev");
+				} else
+					$(this).jmpress("prev");
 			});
 			$(".next").on("click", function() {
 				article.jmpress("next");
@@ -45,11 +76,51 @@
 				article.jmpress("prev");
 				return false;
 			});
+			$(".down").on("click", function() {
+				article.jmpress("down");
+				return false;
+			});
 			$(".home").on("click", function() {
 				article.jmpress("home");
 				return false;
 			});
 		});
+
+		/* Non-default default flow */
+		(function( $, document, window, undefined ) {
+
+			'use strict';
+			var $jmpress = $.jmpress;
+
+			/* FUNCTIONS */
+			function prevOrNext( jmpress, step, eventData, prev) {
+				if (!step) {
+					return false;
+				}
+				var stepSelector = eventData.settings.stepSelector;
+				step = $(step);
+				do {
+					var item = step[prev?"prevAll":"nextAll"](stepSelector).first();
+					if(!item || item.length == 0) item = step.near( stepSelector, prev );
+					if (item.length === 0 || item.closest(jmpress).length === 0) {
+						item = $(jmpress).find(stepSelector)[prev?"last":"first"]();
+					}
+					if (!item.length) {
+						return false;
+					}
+					step = item;
+				} while( step.data("stepData").exclude );
+				return step;
+			}
+
+			/* HOOKS */
+			$jmpress( 'selectPrev', function( step, eventData ) {
+				return prevOrNext(this, step, eventData, true);
+			});
+			$jmpress( 'selectNext', function( step, eventData ) {
+				return prevOrNext(this, step, eventData);
+			});
+		}(jQuery, document, window));
 
 		/* jmpress-choose-route plugin */
 		$.jmpress("beforeChange", function(el, eventData) {
@@ -231,6 +302,203 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 		<p class="requirejs-on">You know require.js, which will be compared to me later.</p>
 	</section>
 
+	<section id="transferring">
+		<h1>Transferring. Simple concatination?</h1>
+		<p>Modules should be executed on the client, so they must be transferred.</p>
+		<p>There are two extremas how to split requests/files to modules:</p>
+		<ul>
+		<li>1 request/file per module (i. e. <code>require.js</code> in dev mode)</li>
+		<li>All modules in a request/file (i. e. <code>browserify</code>)</li>
+		</ul>
+		<p>Both are used in the wild (preferable the second one), but both are suboptimal:</p>
+		<ul>
+		<li>If there is 1 request/file per module,
+			<ul>
+			<li>only required modules are transferred,</li>
+			<li>but there are many requests which means much overhead.</li>
+			</ul></li>
+		<li>If there is 1 request/file with all modules,
+			<ul>
+			<li>it would be less overhead,</li>
+			<li>but not (yet) required modules are transferred too.</li>
+			</ul></li>
+		</ul>
+	</section>
+
+	<section id="transferring-flexible">
+		<h1>Transferring. A flexible solution</h1>
+		<p>A more flexible transferring is better.</p>
+		<p>&rarr; Chunked concatination</p>
+		<ul>
+		<li>Split the code base into multiple smaller requests/files/chunks.</li>
+		<li>Transfer chunks on demand.</li>
+		<li>The split points are up to you as developer.</li>
+		<li>This make me really flexible and useable for big code bases.</li>
+		<li>It's optional to use. You may don't need it for small projects.</li>
+		</ul>
+		<p class="smaller">Note: A Google developer recently got this idea too: <a href="https://github.com/google/module-server" target="_blank">google/module-server</a>, but it depends on a server-side component.</p>
+		<p>I've some slides with more details on my output format. Use the down array (&darr;) to navigate to them or use the DETAILS button on the right side.</p>
+
+		<section id="existing-output-format">
+			<h1>Existing output formats</h1>
+			<p>Other module system/bundler emit much code into the output file for path resolution logic:</p>
+			<p class="smaller">i. e. modules-webmake</p>
+			<pre>// some lines of the modules system
+// many lines of the path resolution logic
+{
+	"folder": {
+		"fileA": function of module A,
+		"fileB": function of module B
+	},
+	"fileC": function of module C
+}
+("./fileC") // Startup</pre>
+		</section>
+
+		<section id="existing-output-format-ii">
+			<h1>Existing output formats (Con't)</h1>
+			<p>And a module looks like this:</p>
+			<pre>function(exports, module, require) {
+	// The file
+	module.exports = require("./folder/fileA");
+}</pre>
+			<p>This format cause some trouble:</p>
+			<ul>
+			<li>Your path names are in the output file.</li>
+			<li>The client need to do the module resolution.</li>
+			<li>Overhead though string like <code>"./folder/fileA"</code>.</li>
+			<li>Code for the path resolution must be emitted into the output file.</li>
+			</ul>
+			<p>I can do better.</p>
+		</section>
+
+		<section id="my-output-format">
+			<h1>How can I do better?</h1>
+			<ul>
+			<li>I don't want the client to do the path resolution and do it while compiling.</li>
+			<li>I don't want to expose path information and replace the strings with small numbers.</li>
+			</ul>
+			<pre>// some lines of the modules system
+{
+	0: function of module C,
+	1: function of module A,
+	2: function of module B
+}</pre>
+			<p>with <code>function of module</code>:</p>
+			<pre>function(exports, module, require) {
+	// The file
+	module.exports = require(0);
+}</pre>
+			<p>I ever start on module <code>0</code> to save the startup call.</p>
+		</section>
+
+		<section id="my-output-format-ii">
+			<h1>My output format</h1>
+			<p>My output format make the client-side really simple. On the next slide I include the complete module system, because it's so small that it fits on a slide ;)</p>
+			<h3>Pro</h3>
+			<ul>
+			<li>Smaller, Faster, Simplier</li>
+			</ul>
+			<h3>Contra</h3>
+			<ul>
+			<li>Complexer compilation.</li>
+			<li>Source are modified (a little bit). Comments? Source Maps?</li>
+			<li><code>module.id</code> is not longer a string, but a number.</li>
+
+		</section>
+
+		<section id="webpack-overhead">
+			<pre>(function(modules) { /* No space for comments... */
+    var installedModules = {};
+    function require(moduleId) {
+        if(typeof moduleId !== "number")
+            throw new Error("Cannot find module '"+moduleId+"'");
+        if(installedModules[moduleId])
+            return installedModules[moduleId].exports;
+        var module = installedModules[moduleId] =
+            { exports: {}, id: moduleId, loaded: false };
+        modules[moduleId](module, module.exports, require);
+        module.loaded = true;    return module.exports;
+    }
+    require.e = function(chunkId, callback) {
+        callback(require);
+    }; // require.ensure, don't care for it now.
+    require.modules = modules;
+    require.cache = installedModules;
+    return require(0);
+})({ /* the modules */ })</pre>
+		</section>
+
+	</section>
+
+	<section id="require-ensure">
+		<h1>Split points</h1>
+		<p>"Ok cool, but how can I set split points to use chunked tranferring"</p>
+		<ul>
+		<li>Use AMD-style <code>require</code>, or</li>
+		<li>use the <code>require.ensure</code> function.</li>
+		</ul>
+		<p class="requirejs-off">I explain only the <code>require.ensure</code> function. You'll find documentation on AMD-style <code>require</code> in the <a href="http://requirejs.org/docs/api.html#packages" target="_blank">require.js API</a>.</p>
+		<pre><strong>require.ensure(modules: string[], callback: (require) => void)</strong></pre>
+		<ul>
+		<li><code>modules</code> is a list of modules that are included in the chunk additically to the dependencies in the <code>callback</code> function.</li>
+		<li><code>callback</code> function with code to run after the chunk was loaded. Calls to <code>require</code> in the function's body are parsed and placed into the chunk.</li>
+		</ul>
+		<p>You'll find an example on the next slide</p>
+	</section>
+
+	<section id="require-ensure-example">
+		<h1>Code Splitting</h1>
+		<pre>var a = require("a");
+var b = require("b");
+require.ensure(["c"], function(require) {
+    require("b").xyz();
+    var d = require("d");
+});</pre>
+		<p class="smaller">File 1: <code>web.js</code></p>
+		<ul>
+		<li>code of that file</li>
+		<li>code of module a and dependencies</li>
+		<li>code of module b and dependencies</li>
+		</ul>
+		<p class="smaller">File 2: <code>1.web.js</code></p>
+		<ul>
+		<li>code of module c and dependencies (but code is not used)</li>
+		<li>code of module d and dependencies</li>
+		</ul>
+
+		<section id="output-format-code-splitting">
+			<h1>Output format with multiple chunks</h1>
+			<p>If you use Code Splitting the first chunk includes some code to add the other chunks on demand.</p>
+			<p class="smaller">I change your calls of <code>require.ensure</code> to calls to <code>require.e</code> (shorter is better) with a chunk id to load. A chunk is loaded by adding a <code>&lt;script&gt;</code>-tag (so it's cross-origin) and callback is called by the JSONP-call the chunk contains.</p>
+			<p>To sum it up, we have:</p>
+			<ul>
+			<li>Code to add <code>&lt;script&gt;</code>-tag in initial chunk</li>
+			<li>JSONP callback in initial chunk</li>
+			<li>Other chunks contain only a call to the JSONP function.</li>
+			</ul>
+		</section>
+
+		<section id="output-format-chunk">
+			<h1>Output format of a chunk</h1>
+			<pre>webpackJsonp(1 /* chunk id */, {
+    3: function(module, exports, require) { /* the module */ },
+    4: function(module, exports, require) { /* the module */ },
+    6: function(module, exports, require) { /* the module */ }
+})</pre>
+			<p>which minimizes great:</p>
+			<pre>webpackJsonp(1,{3:function(a,b,c){},4:function(a,b,c){},6:function(a,b,c){}})</pre>
+			<h3>Contra</h3>
+			<ul>
+			<li>Mulitple instances of webpack module systems can conflict if they use the same JSONP-callback name. You can specify the callback name as option.</li>
+			</ul>
+		</section>
+	</section>
+
+	<section id="">
+		<h1>WIP</h1>
+	</section>
+
 	<section id="">
 		<h1>WIP</h1>
 	</section>
@@ -239,6 +507,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 
 <div class="jmpress-only global-prev prev"></div>
 <div class="jmpress-only global-next next"></div>
+<div class="jmpress-only global-down down">DETAILS</div>
 
 <footer><p>
 	<g:plusone href="http://webpack.github.com/"></g:plusone>

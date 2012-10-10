@@ -87,6 +87,7 @@ h3 { font-size: 130%; font-weight: 700; }
 h4 { font-size: 120%; font-weight: 700; }
 h5 { font-size: 110%; font-weight: 700; }
 p { font-size: 100%; }
+.smaller { font-size: 80%; }
 ul { padding-left: 20px; }
 li { font-size: 20px; list-style: circle; }
 strong { font-weight: 700; }
@@ -104,7 +105,7 @@ section {
 	-ms-box-sizing:     border-box;
 	-o-box-sizing:      border-box;
 	box-sizing:         border-box;
-	
+
 	line-height: 1.5;
 	font-size: 30px;
 
@@ -143,6 +144,40 @@ section {
 	right: -50px;
 	border-top-right-radius: 0px;
 	border-bottom-right-radius: 0px;
+}
+
+.global-down {
+	position: fixed;
+	top: 60%;
+	right: -500px;
+	border-radius: 50px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	display: block;
+	padding: 40px;
+	padding-right: 90px;
+	background: #333;
+	height: 100px;
+	cursor: pointer;
+	color: white;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing:    border-box;
+	-ms-box-sizing:     border-box;
+	-o-box-sizing:      border-box;
+	box-sizing:         border-box;
+
+	-webkit-transition: right 1s;
+	-moz-transition:    right 1s;
+	-ms-transition:     right 1s;
+	-o-transition:      right 1s;
+	transition:         right 1s;
+
+	pointer-events: auto;
+}
+
+.global-down.active {
+	right: -50px;
 }
 
 footer {
