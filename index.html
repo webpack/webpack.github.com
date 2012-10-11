@@ -11,11 +11,16 @@
 
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,800italic,400,800,700' rel='stylesheet' type='text/css'>
 	<link href="assets/style.css" rel="stylesheet" type="text/css" />
+	<link href="assets/github.css" rel="stylesheet" type="text/css" />
 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="assets/jmpress.custom.min.js"></script>
+	<script type="text/javascript" src="assets/highlight.pack.js"></script>
 
 	<script type="text/javascript">
+		hljs.tabReplace = '    ';
+		hljs.initHighlightingOnLoad();
+
 		$(function($) {
 			$.jmpress("template", "main", {
 				children: function(idx) {
@@ -233,10 +238,10 @@
 
 	<section id="style-tag-style">
 		<h1><code>&lt;script&gt;</code>-tag style</h1>
-<pre>&lt;script src="module1.js&gt;&lt;/script&gt;
+<pre class="language-html"><code>&lt;script src="module1.js&gt;&lt;/script&gt;
 &lt;script src="module2.js&gt;&lt;/script&gt;
 &lt;script src="libaryA.js&gt;&lt;/script&gt;
-&lt;script src="module3.js&gt;&lt;/script&gt;</pre>
+&lt;script src="module3.js&gt;&lt;/script&gt;</code></pre>
 		<p>Modules export a interface to the global object, i. e. <code>window</code>.</p>
 		<h3>Common problems:</h3>
 		<ul>
@@ -251,7 +256,7 @@
 	<section id="commonjs-style">
 		<h1>CommonJS: synchron require</h1>
 		<p>This is the style you use in <code>node.js</code> on server side.</p>
-		<pre>require("module"); require("../file.js");</pre>
+		<pre class="language-javascript"><code>require("module"); require("../file.js");</code></pre>
 		<h3>Pro</h3>
 		<ul>
 		<li>Reuse server-side modules, npm</li>
@@ -270,8 +275,8 @@
 		<h1>AMD: asynchronous require</h1>
 		<p><code>Asynchronous Module Definition</code></p>
 		<p>Other module system had problems with the synchron require and introduces a asynchronous require:</p>
-		<pre>require(["module", "../file.js"], function(modules, file) { /*...*/ });
-define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
+		<pre class="language-javascript"><code>require(["module", "../file.js"], function(modules, file) { /*...*/ });
+define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 		<h3>Pro</h3>
 		<ul>
 		<li>Fits the asynchronous request style</li>
@@ -336,14 +341,14 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 		<li>This make me really flexible and useable for big code bases.</li>
 		<li>It's optional to use. You may don't need it for small projects.</li>
 		</ul>
-		<p class="smaller">Note: A Google developer recently got this idea too: <a href="https://github.com/google/module-server" target="_blank">google/module-server</a>, but it depends on a server-side component.</p>
-		<p>I've some slides with more details on my output format. Use the down array (&darr;) to navigate to them or use the DETAILS button on the right side.</p>
+		<p class="smaller">Note: <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodeSplitting" target="_blank">The idea is from Google's GWT</a>. A Google developer also recently implemented a similar system for AMD-style modules: <a href="https://github.com/google/module-server" target="_blank">google/module-server</a>, but it depends on a server-side component.</p>
+		<p class="smaller">I've some slides with more details on my output format. Use the down array (&darr;) to navigate to them or use the DETAILS button on the right side.</p>
 
 		<section id="existing-output-format">
 			<h1>Existing output formats</h1>
 			<p>Other module system/bundler emit much code into the output file for path resolution logic:</p>
 			<p class="smaller">i. e. modules-webmake</p>
-			<pre>// some lines of the modules system
+			<pre class="language-javascript"><code>// some lines of the modules system
 // many lines of the path resolution logic
 {
 	"folder": {
@@ -352,16 +357,16 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 	},
 	"fileC": function of module C
 }
-("./fileC") // Startup</pre>
+("./fileC") // Startup</code></pre>
 		</section>
 
 		<section id="existing-output-format-ii">
 			<h1>Existing output formats (Con't)</h1>
 			<p>And a module looks like this:</p>
-			<pre>function(exports, module, require) {
+			<pre class="language-javascript"><code>function(exports, module, require) {
 	// The file
 	module.exports = require("./folder/fileA");
-}</pre>
+}</code></pre>
 			<p>This format cause some trouble:</p>
 			<ul>
 			<li>Your path names are in the output file.</li>
@@ -378,17 +383,17 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 			<li>I don't want the client to do the path resolution and do it while compiling.</li>
 			<li>I don't want to expose path information and replace the strings with small numbers.</li>
 			</ul>
-			<pre>// some lines of the modules system
+			<pre class="language-javascript"><code>// some lines of the modules system
 {
 	0: function of module C,
 	1: function of module A,
 	2: function of module B
-}</pre>
+}</code></pre>
 			<p>with <code>function of module</code>:</p>
-			<pre>function(exports, module, require) {
+			<pre class="language-javascript"><code>function(exports, module, require) {
 	// The file
 	module.exports = require(0);
-}</pre>
+}</code></pre>
 			<p>I ever start on module <code>0</code> to save the startup call.</p>
 		</section>
 
@@ -398,17 +403,18 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 			<h3>Pro</h3>
 			<ul>
 			<li>Smaller, Faster, Simplier</li>
+			<li>No paths exposed. No path resolution on client side.</li>
+			<li>Less overhead.</li>
 			</ul>
 			<h3>Contra</h3>
 			<ul>
 			<li>Complexer compilation.</li>
 			<li>Source are modified (a little bit). Comments? Source Maps?</li>
 			<li><code>module.id</code> is not longer a string, but a number.</li>
-
 		</section>
 
 		<section id="webpack-overhead">
-			<pre>(function(modules) { /* No space for comments... */
+			<pre class="language-javascript"><code>(function(modules) { /* No space for comments... */
     var installedModules = {};
     function require(moduleId) {
         if(typeof moduleId !== "number")
@@ -426,7 +432,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
     require.modules = modules;
     require.cache = installedModules;
     return require(0);
-})({ /* the modules */ })</pre>
+})({ /* the modules */ })</code></pre>
 		</section>
 
 	</section>
@@ -439,7 +445,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 		<li>use the <code>require.ensure</code> function.</li>
 		</ul>
 		<p class="requirejs-off">I explain only the <code>require.ensure</code> function. You'll find documentation on AMD-style <code>require</code> in the <a href="http://requirejs.org/docs/api.html#packages" target="_blank">require.js API</a>.</p>
-		<pre><strong>require.ensure(modules: string[], callback: (require) => void)</strong></pre>
+		<pre class="language-javascript"><code>require.ensure(modules: string[], callback: (require) => void)</code></pre>
 		<ul>
 		<li><code>modules</code> is a list of modules that are included in the chunk additically to the dependencies in the <code>callback</code> function.</li>
 		<li><code>callback</code> function with code to run after the chunk was loaded. Calls to <code>require</code> in the function's body are parsed and placed into the chunk.</li>
@@ -449,12 +455,12 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</pre>
 
 	<section id="require-ensure-example">
 		<h1>Code Splitting</h1>
-		<pre>var a = require("a");
+		<pre class="language-javascript"><code>var a = require("a");
 var b = require("b");
 require.ensure(["c"], function(require) {
     require("b").xyz();
     var d = require("d");
-});</pre>
+});</code></pre>
 		<p class="smaller">File 1: <code>web.js</code></p>
 		<ul>
 		<li>code of that file</li>
@@ -481,17 +487,80 @@ require.ensure(["c"], function(require) {
 
 		<section id="output-format-chunk">
 			<h1>Output format of a chunk</h1>
-			<pre>webpackJsonp(1 /* chunk id */, {
+			<pre class="language-javascript"><code>webpackJsonp(1 /* chunk id */, {
     3: function(module, exports, require) { /* the module */ },
     4: function(module, exports, require) { /* the module */ },
-    6: function(module, exports, require) { /* the module */ }
-})</pre>
+    6: function(module, exports, require) { /* the module */ },
+	/* ... */
+})</code></pre>
 			<p>which minimizes great:</p>
-			<pre>webpackJsonp(1,{3:function(a,b,c){},4:function(a,b,c){},6:function(a,b,c){}})</pre>
+			<pre class="language-javascript"><code>webpackJsonp(1,{3:function(a,b,c){},4:function(a,b,c){},/* ... */})</code></pre>
 			<h3>Contra</h3>
 			<ul>
 			<li>Mulitple instances of webpack module systems can conflict if they use the same JSONP-callback name. You can specify the callback name as option.</li>
 			</ul>
+		</section>
+	</section>
+
+	<section id="only-js">
+		<h1>Why only javascript?</h1>
+		<p>Why should I only help you with javascript? There are so much more static resources:</p>
+		<ul>
+		<li>stylesheets</li>
+		<li>images</li>
+		<li>webfonts</li>
+		<li>html for templating</li>
+		<li>etc.</li>
+		</ul>
+		<p>And also:</p>
+		<ul>
+		<li>coffeescript &rarr; javascript</li>
+		<li>less stylesheets &rarr; css stylesheets</li>
+		<li>jade templates &rarr; javascript which generates html</li>
+		<li>i18n files &rarr; something</li>
+		<li>big etc.</li>
+		</ul>
+	</section>
+
+	<section id="not-only-js">
+		<h1>Why only javascript?</h1>
+		<p>I help you!</p>
+		<pre class="language-javascript"><code>require("./style.css");</code></pre>
+		<p>That's cool.</p>
+		<pre class="language-javascript"><code>require("./style.less");
+require("./template.jade");
+require("./image.png");</code></pre>
+		<p>Even cooler!</p>
+		<p>You don't need to put your files though some preprocessing manually. I do it for you and it is very easy to use (As you see from the lines above).</p>
+		<p class="smaller">Important note for you as developer: Yes you can extend it very easily. You can use your favorite templates/stylesheets/scripts/whatever.</p>
+	</section>
+
+	<section id="loaders">
+		<h1>Loaders</h1>
+		<p>"Ok cool, but what is the technique behind it?"</p>
+		<p>It's called <strong>loaders</strong>.</p>
+		<p>A loader...</p>
+		<ul>
+		<li>... is a javascript function preprocessing a file.</li>
+		<li>... is running in <code>node.js</code>, so possibilities are endless.</li>
+		<li>... can be piped together with other loaders, but the last loader should emit javascript.</li>
+		<li>... can opt-in for optional execution in a seperate process (cpu-heavy stuff).</li>
+		<li>... can be passed options.</li>
+		<li>... can be published/installed though <code>npm</code>.</li>
+		<li>... can be asynchronous.</li>
+		<li>... can be bound to extensions/RegExps.</li>
+		<li>... can emit files.</li>
+		</ul>
+		<pre class="language-javascript"><code>require("your-loader!./your-file.xyz");
+require("./loader.js!./loader2.js!module/with/a/file");</code></pre>
+
+		<section id="">
+			<h1>A simple loader</h1>
+
+		</section>
+
+		<section id="">
+			<h1>WIP</h1>
 		</section>
 	</section>
 
