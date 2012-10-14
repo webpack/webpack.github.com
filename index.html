@@ -36,7 +36,8 @@
 					}
 				}
 			});
-			var article = $("article")
+			var lastTime = new Date();
+			var article = $("article");
 			article.jmpress({
 				stepSelector: "section",
 				viewPort: {
@@ -54,7 +55,19 @@
 					}
 				},
 				setActive: function(el) {
-					$(".global-down")[$(el).children( "section" ).length > 0 ? "addClass" : "removeClass"]("active")
+					$(".global-down")[$(el).children( "section" ).length > 0 ? "addClass" : "removeClass"]("active");
+				},
+				beforeChange: function(el) {
+					var step = article.jmpress("active");
+					if(!step) return;
+					var slide = step.find("h1").text();
+					if(!slide) return;
+					var _gaq = window._gaq;
+					var time = Math.min(60000, new Date() - lastTime);
+					lastTime = new Date();
+					if(time > 3000) {
+						_gaq.push(['_trackTiming', 'Slide View', slide, time, undefined, 100]);
+					}
 				}
 			});
 			$.jmpress("register", "down", function() {
@@ -62,6 +75,10 @@
 				var item = active.children( $(this).jmpress("settings").stepSelector ).first();
 				if(item && item.length > 0) {
 					$(this).jmpress("select", item, "next");
+					var slide = step.find("h1").text();
+					if(!slide) return;
+					var _gaq = window._gaq;
+					_gaq.push(['_trackEvent', 'Slide', 'Details', slide, 'Yes']);
 				} else
 					$(this).jmpress("next");
 			});
@@ -187,25 +204,28 @@
 			<li>Do you know <code>CommonJS</code> and <code>AMD</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#module-system-style" data-goto="#existing-module-systems" data-class="commonjs"/>. Elsewise I've some slides for you.</li>
 			<li>Do you know <code>browserify</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="browserify" checked="checked"/>. I'll show you the differences.</li>
 			<li>Do you know <code>require.js</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="requirejs" checked="checked"/>. I'll compare it with me to.</li>
+			<!--
 			<li>Do you know <code>jade</code> templating language? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="jade" checked="checked"/>. I'll show you how to use it with me.</li>
 			<li>Do you know <code>less</code> stylesheets? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="less" checked="checked"/>. I'll explain why you can use it with just one line.</li>
 			<li>Do you know <code>coffeescript</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="coffeescript" checked="checked"/>. I'll prove that you can use it as full replacement of js.</li>
 			<li>Do you know <code>express</code> server? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="express" checked="checked"/>. I've some slide showing how to integrate the dev tools.</li>
+			-->
 		</ul>
 	</section>
 
 	<section id="content">
 		<h1>Content</h1>
 		<ul>
-		<li>Todays Web Apps: Motivation</li>
-		<li class="commonjs-class strike-if-on">Module system styles</li>
-		<li>Existing module systems</li>
-		<li>Transferring. Simple concatination?</li>
-		<li>Why only javascript? More static resources.</li>
-		<li>Loaders</li>
+		<li><a href="#motivation">Todays Web Apps: Motivation</a></li>
+		<li class="commonjs-class strike-if-on"><a href="#module-system-style">Module system styles</a></li>
+		<li><a href="#existing-module-systems">Existing module systems</a></li>
+		<li><a href="#transferring">Transferring. Simple concatination?</a></li>
+		<li><a href="#only-js">Why only javascript? More static resources.</a></li>
+		<li><a href="#loaders">Loaders</a></li>
+		<li><a href="#dynamic-require">Contexts</a></li>
 		<li class="browserify-class strike-if-off">Differences to <code>browserify</code></li>
 		<li class="requirejs-class strike-if-off">Differences to <code>require.js</code></li>
-		<li>Useage</li>
+		<li>Usage</li>
 		<li>Dev Tools</li>
 		<li>More info</li>
 		</ul>
@@ -238,10 +258,10 @@
 
 	<section id="style-tag-style">
 		<h1><code>&lt;script&gt;</code>-tag style</h1>
-<pre class="language-html"><code>&lt;script src="module1.js&gt;&lt;/script&gt;
-&lt;script src="module2.js&gt;&lt;/script&gt;
-&lt;script src="libaryA.js&gt;&lt;/script&gt;
-&lt;script src="module3.js&gt;&lt;/script&gt;</code></pre>
+<pre class="language-html"><code>&lt;script src="module1.js"&gt;&lt;/script&gt;
+&lt;script src="module2.js"&gt;&lt;/script&gt;
+&lt;script src="libaryA.js"&gt;&lt;/script&gt;
+&lt;script src="module3.js"&gt;&lt;/script&gt;</code></pre>
 		<p>Modules export a interface to the global object, i. e. <code>window</code>.</p>
 		<h3>Common problems:</h3>
 		<ul>
@@ -439,7 +459,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 
 	<section id="require-ensure">
 		<h1>Split points</h1>
-		<p>"Ok cool, but how can I set split points to use chunked tranferring"</p>
+		<p>"Ok cool, but how can I set split points to use chunked transferring"</p>
 		<ul>
 		<li>Use AMD-style <code>require</code>, or</li>
 		<li>use the <code>require.ensure</code> function.</li>
@@ -554,22 +574,126 @@ require("./image.png");</code></pre>
 		<pre class="language-javascript"><code>require("your-loader!./your-file.xyz");
 require("./loader.js!./loader2.js!module/with/a/file");</code></pre>
 
-		<section id="">
+		<section id="simple-loader">
 			<h1>A simple loader</h1>
+			<p><code>loader.js</code></p>
+			<pre class="language-javascript"><code>module.exports = function(js) {
+	return "exports.answer = 42;\n" + js;
+}</code></pre>
+			<p><code>file.js</code></p>
+			<pre class="language-javascript"><code>exports.test = "test";</code></pre>
+			<p>Result:</p>
+			<pre class="language-javascript"><code>var loadedFile = require("./loader!./file");
+assert(loadedFile.test === "test");
+assert(loadedFile.answer === 42);</code></pre>
 
 		</section>
 
-		<section id="">
-			<h1>WIP</h1>
+		<section id="async-loader">
+			<h1>A asynchronous loader</h1>
+			<p>Here is an example for an asynchronous loader accessing the <code>node.js</code> APIs:</p>
+			<pre class="language-javascript"><code>// loader.js
+var fs = require("fs");
+var path = require("path");
+module.exports = function(js) {
+	var done = this.async();
+	var headerPath = path.join(__dirname, "header.js");
+	fs.readFile(headerPath, "utf-8", function(err, header) {
+		if(err) return done(err);
+		done(null, header + js);
+	});
+}</code></pre>
+			<p><a href="https://github.com/webpack/webpack/wiki/Loader-Specification" target="_black">&rarr; Loader specification</a></p>
 		</section>
+	</section>
+
+	<section id="included-loaders">
+		<h1>Included loaders</h1>
+		<p>I come with some loaders included:</p>
+		<ul>
+		<li>Utilities: <code>raw</code>, <code>script</code>, <code>file</code>, <code>bundle</code>, <code>val</code></li>
+		<li>Styling: <code>css</code>, <code>style</code>, <code>less</code></li>
+		<li>Templates: <code>jade</code></li>
+		<li>Languages: <code>json</code>, <code>coffee</code></li>
+		</ul>
+		<p>Some of them are bound to file extensions by default.</p>
+		<p>There are more loaders which are not included by default on <a href="https://github.com/webpack/webpack/wiki/Loaders" target="_black">this list</a>.</p>
+		<p>Feel free to write your own loaders.</p>
+		<p>If you open source your own loaders consider adding them to the list.</p>
+	</section>
+
+	<section id="dynamic-require">
+		<h1>Dynamic require</h1>
+		<p>So now all is javascript. So I can show you more of mine javascript features.</p>
+		<pre class="language-javascript"><code>return require("./template/" + templateName + ".jade");</code></pre>
+		<p>Module bundlers do a static code analysis to get dependencies before executing. But this code fragment includes a variable (not compile-time constant). Does the static code analysis fails here?</p>
+		<p class="smaller browserify-on">Note: browserify simply ignore the require and hopes that the files are in the bundle. Because in most cases they are not, you need to force including.</p>
+		<p class="smaller requirejs-on">Note: require.js TODO check how exactly require.js fails on this.</p>
+	</section>
+
+	<section id="context">
+		<h1>Context</h1>
+		<p>I handle this cases with a special mechanism I call "context". All files matching the require are included in the bundle and I find actual the referenced file on runtime.</p>
+		<ul>
+		<li>It is possible to use loaders with contexts.</li>
+		<li>In the most cases contexts are transparent for the developer und just work.</li>
+		<li>Limitation: It is assumed that non-compile-time-constant parts do not contain any <code>"/../"</code>.</li>
+		<li>Common Problem: The complete directory is included. This may not be your intent.</li>
+		<li>The <code>?:</code>-operation do not create a context.</li>
+		<li>Copying the require function into another variable creates a context for the current directory.
+			<ul><li>There is a warning in this case.</li></ul>
+		</li>
+		<li>Files with errors are not included. There is a warning in this case.</li>
+		<li>You can create a context also with <code>require.context(path: string)</code>.
+			<ul>
+			<li>It return a function to require from that folder.</li>
+			<li>The function has a method <code>.keys()</code> returning all possible parameters.</li>
+			</ul>
+		</li>
+		</ul>
+
+		<section id="context-details">
+			<h1>Emitted modules</h1>
+			<p>For each context a context module is emitted, which contains a map of files in the context and code for finding the correct file.</p>
+			<p class="smaller">i. e. a <code class="language-javascript">require("./template/" + templateName + ".jade")</code> may result in a map like that: (emitted with lookup code in module 22)</p>
+			<pre class="language-javascript"><code>{	// string: module id
+	"./templateA.jade": 23,
+	"./templateB.jade": 24,
+	"./more/templateC.jade": 25
+}</code></pre>
+			<p class="smaller">... and the require converted to:</p>
+			<pre class="language-javascript"><code>require(22)("./" + templateName + ".jade")</code></pre>
+			<p>The files (modules 23 - 25) are included like any require.</p>
+		</section>
+	</section>
+
+	<section id="rich-list">
+		<h1>Rich list of more features</h1>
+		<ul>
+		<li>I can add a hash of the bundle content to the filename for better <strong>http caching</strong>.</li>
+		<li>Try <code>enhanced-require</code> to use loaders, contexts, etc. in <strong>node.js</strong>.</li>
+		<li>There is a <strong>grunt</strong> task (<code>grunt-webpack</code>) to include me in your build process.</li>
+		<li>I have <strong>many config options</strong>. You can customize me to fit to your imagination.</li>
+		<li>I can <strong>cache</strong> previous module results to support faster re-compilation.</li>
+		<li>I have some browser replacement for <strong>node.js buildin libaries</strong> included.</li>
+		<li>You have various options to apply <strong>browser replacements</strong> for anything.</li>
+		<li>I emit <strong>events</strong> in the progress of the compilation.</li>
+		<li>I can use <strong>worker processes</strong> for compilation.</li>
+		</ul>
 	</section>
 
 	<section id="">
 		<h1>WIP</h1>
-	</section>
-
-	<section id="">
-		<h1>WIP</h1>
+		<ul>
+		<li>compare to browserify</li>
+		<li>compare to require.js</li>
+		<li>Usage</li>
+		<li>Dev Tools</li>
+		<li>jade usage</li>
+		<li>less usage</li>
+		<li>coffeescript usage</li>
+		<li>Pull Requests are welcome: Additional info and/or fixes</li>
+		</ul>
 	</section>
 
 </article>
