@@ -75,7 +75,7 @@
 				var item = active.children( $(this).jmpress("settings").stepSelector ).first();
 				if(item && item.length > 0) {
 					$(this).jmpress("select", item, "next");
-					var slide = step.find("h1").text();
+					var slide = active.find("h1").text();
 					if(!slide) return;
 					var _gaq = window._gaq;
 					_gaq.push(['_trackEvent', 'Slide', 'Details', slide, 'Yes']);
@@ -184,7 +184,7 @@
 
 	<section id="home">
 		<center><img src="assets/logo.png" /></center>
-		<p>Hi, I'm a <strong>module system</strong>.</p>
+		<p>Hi, I'm a <strong>module system</strong> for the browser.</p>
 		<p>You like to get know me? I'll tell you more.</p>
 		<p data-jmpress="fade after 700ms step" class="jmpress-only">You can navigate through this website with</p>
 		<ul>
@@ -294,7 +294,7 @@
 	<section id="amd-style">
 		<h1>AMD: asynchronous require</h1>
 		<p><code>Asynchronous Module Definition</code></p>
-		<p>Other module system had problems with the synchron require and introduces a asynchronous require:</p>
+		<p>Other module systems had problems with the synchronous require and introduced a asynchronous require:</p>
 		<pre class="language-javascript"><code>require(["module", "../file.js"], function(modules, file) { /*...*/ });
 define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 		<h3>Pro</h3>
@@ -333,11 +333,11 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 		<p>There are two extremas how to split requests/files to modules:</p>
 		<ul>
 		<li>1 request/file per module (i. e. <code>require.js</code> in dev mode)</li>
-		<li>All modules in a request/file (i. e. <code>browserify</code>)</li>
+		<li>All modules in a request/file (i. e. <code>browserify</code>, <code>require.js</code> bundled)</li>
 		</ul>
 		<p>Both are used in the wild (preferable the second one), but both are suboptimal:</p>
 		<ul>
-		<li>If there is 1 request/file per module,
+		<li>If there is a request/file per module,
 			<ul>
 			<li>only required modules are transferred,</li>
 			<li>but there are many requests which means much overhead.</li>
@@ -481,13 +481,13 @@ require.ensure(["c"], function(require) {
     require("b").xyz();
     var d = require("d");
 });</code></pre>
-		<p class="smaller">File 1: <code>web.js</code></p>
+		<p class="smaller">File/Chunk 1: <code>web.js</code></p>
 		<ul>
 		<li>code of that file</li>
 		<li>code of module a and dependencies</li>
 		<li>code of module b and dependencies</li>
 		</ul>
-		<p class="smaller">File 2: <code>1.web.js</code></p>
+		<p class="smaller">File/Chunk 2: <code>1.web.js</code> (loaded when calling <code>require.ensure</code>)</p>
 		<ul>
 		<li>code of module c and dependencies (but code is not used)</li>
 		<li>code of module d and dependencies</li>
@@ -543,7 +543,7 @@ require.ensure(["c"], function(require) {
 	</section>
 
 	<section id="not-only-js">
-		<h1>Why only javascript?</h1>
+		<h1>Why only javascript? (Con't)</h1>
 		<p>I help you!</p>
 		<pre class="language-javascript"><code>require("./style.css");</code></pre>
 		<p>That's cool.</p>
@@ -633,7 +633,7 @@ module.exports = function(js) {
 
 	<section id="context">
 		<h1>Context</h1>
-		<p>I handle this cases with a special mechanism I call "context". All files matching the require are included in the bundle and I find actual the referenced file on runtime.</p>
+		<p>I handle this cases with a special mechanism I call "context". All files matching the require are included in the bundle and I find the actual referenced file on runtime.</p>
 		<ul>
 		<li>It is possible to use loaders with contexts.</li>
 		<li>In the most cases contexts are transparent for the developer und just work.</li>
