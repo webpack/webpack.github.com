@@ -60,7 +60,7 @@
 				beforeChange: function(el) {
 					var step = article.jmpress("active");
 					if(!step) return;
-					var slide = step.find("h1").text();
+					var slide = step.find("h1").first().text();
 					if(!slide) return;
 					var _gaq = window._gaq;
 					var time = Math.min(60000, new Date() - lastTime);
@@ -75,7 +75,7 @@
 				var item = active.children( $(this).jmpress("settings").stepSelector ).first();
 				if(item && item.length > 0) {
 					$(this).jmpress("select", item, "next");
-					var slide = active.find("h1").text();
+					var slide = active.find("h1").first().text();
 					if(!slide) return;
 					var _gaq = window._gaq;
 					_gaq.push(['_trackEvent', 'Slide', 'Details', slide, 'Yes']);
