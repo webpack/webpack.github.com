@@ -96,18 +96,21 @@ pre { font-family: monospace; font-size: 20px; }
 code { font-family: monospace; }
 
 section {
+	padding: 40px;
+
+	line-height: 1.5;
+	font-size: 30px;
+}
+
+.jmpress-initialized section {
 	width: 980px;
 	height: 640px;
-	padding: 40px;
 
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing:    border-box;
 	-ms-box-sizing:     border-box;
 	-o-box-sizing:      border-box;
 	box-sizing:         border-box;
-
-	line-height: 1.5;
-	font-size: 30px;
 
 	pointer-events: auto;
 }
@@ -117,13 +120,13 @@ section {
 }
 
 .jmpress-initialized .jmpress-only {
-	display: block;
+	display: inherit;
 }
 
 .global-next, .global-prev {
 	position: fixed;
 	bottom: 50%;
-	display: block;
+	display: none;
 	padding: 0px;
 	background: #333;
 	border-radius: 100%;
@@ -153,7 +156,7 @@ section {
 	border-radius: 50px;
 	border-top-right-radius: 0px;
 	border-bottom-right-radius: 0px;
-	display: block;
+	display: none;
 	padding: 40px;
 	padding-right: 90px;
 	background: #333;
@@ -180,6 +183,10 @@ section {
 	right: -50px;
 }
 
+.jmpress-initialized  .global-down, .jmpress-initialized .global-next, .jmpress-initialized .global-prev {
+	display: block;
+}
+
 footer {
 	position: fixed;
 	bottom: 0px;
@@ -196,4 +203,23 @@ footer {
 	text-decoration: line-through;
 }
 
+table.compare {
+	width: 100%;
+}
 
+table.compare th {
+	text-align: left;
+	font-weight: 800;
+}
+
+table.compare td {
+	font-size: 20px;
+}
+
+table.compare td.plus {
+	color: #393;
+}
+
+table.compare td.minus {
+	color: #933;
+}

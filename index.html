@@ -46,7 +46,7 @@
 					maxScale: 1
 				},
 				afterInit: function() {
-					article.addClass("jmpress-initialized")
+					$("body").addClass("jmpress-initialized")
 				},
 				keyboard: {
 					keys: {
@@ -149,7 +149,7 @@
 			if(eventData.reason != "next") return;
 			var chooser = null;
 			$(".jmpress-choose-route").each(function() {
-				if(el.is($(this).data("slice")) && $(this).is(":checked"))
+				if(el.is($(this).data("slice")) && ($(this).is(":checked") ^ !!$(this).data("invert")))
 					chooser = $(this);
 			});
 			if(chooser) {
@@ -183,27 +183,28 @@
 <article data-template="main">
 
 	<section id="home">
-		<center><img src="assets/logo.png" /></center>
+		<center><a href="https://github.com/webpack/webpack"><img src="assets/logo.png" /></a></center>
 		<p>Hi, I'm a <strong>module system</strong> for the browser.</p>
 		<p>You like to get know me? I'll tell you more.</p>
 		<p data-jmpress="fade after 700ms step" class="jmpress-only">You can navigate through this website with</p>
-		<ul>
+		<ul class="jmpress-only">
 		<li data-jmpress="fade after 500ms">your arrow keys (&larr;, &rarr;),</li>
 		<li data-jmpress="fade after 500ms">the space bar or</li>
 		<li data-jmpress="fade after 500ms">the buttons on the left and the right of the screen.</li>
 		</ul>
-		<p data-jmpress="fade after 1s">Yeah. Ready to get to know webpack: Go <strong>right</strong> &rarr;!
+		<p data-jmpress="fade after 1s" class="jmpress-only">Yeah. Ready to get to know webpack: Go <strong>right</strong> &rarr;!
 	</section>
 
-	<section>
+	<section id="customize" class="jmpress-only">
 		<h1>Customize the content</h1>
 		<p>Answer these few questions so <br/>I can present you relevant stuff only:</p>
+		<p class="smaller">(or just skip them, than I'll show you all stuff)</p>
 		<ul>
 			<li>Are you a <code>javascript</code> developer? If not, leave this website, the content is not relevant to you.</li>
 			<li>Do you know <code>node.js</code>? I hope so. Elsewise read <a href="http://nodejs.org" target="_blank">nodejs.org</a>.</li>
 			<li>Do you know <code>CommonJS</code> and <code>AMD</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#module-system-style" data-goto="#existing-module-systems" data-class="commonjs"/>. Elsewise I've some slides for you.</li>
-			<li>Do you know <code>browserify</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="browserify" checked="checked"/>. I'll show you the differences.</li>
-			<li>Do you know <code>require.js</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="requirejs" checked="checked"/>. I'll compare it with me to.</li>
+			<li>Do you know <code>browserify</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#comparison-browserify" data-goto="#comparison-requirejs" data-class="browserify" data-invert="yes" checked="checked"/>. I'll show you the differences.</li>
+			<li>Do you know <code>require.js</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#comparison-requirejs" data-goto="#usage-cli" data-class="requirejs" data-invert="yes" checked="checked"/>. I'll compare it with me to.</li>
 			<!--
 			<li>Do you know <code>jade</code> templating language? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="jade" checked="checked"/>. I'll show you how to use it with me.</li>
 			<li>Do you know <code>less</code> stylesheets? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="less" checked="checked"/>. I'll explain why you can use it with just one line.</li>
@@ -223,11 +224,11 @@
 		<li><a href="#only-js">Why only javascript? More static resources.</a></li>
 		<li><a href="#loaders">Loaders</a></li>
 		<li><a href="#dynamic-require">Contexts</a></li>
-		<li class="browserify-class strike-if-off">Differences to <code>browserify</code></li>
-		<li class="requirejs-class strike-if-off">Differences to <code>require.js</code></li>
-		<li>Usage</li>
-		<li>Dev Tools</li>
-		<li>More info</li>
+		<li class="browserify-class strike-if-off"><a href="#comparison-browserify">Differences to <code>browserify</code></a></li>
+		<li class="requirejs-class strike-if-off"><a href="#comparison-requirejs">Differences to <code>require.js</code></a></li>
+		<li><a href="#usage-cli">Usage</a></li>
+		<li><a href="#dev-tools">Dev Tools</a></li>
+		<li><a href="#rich-list">More features</a></li>
 		</ul>
 	</section>
 
@@ -362,7 +363,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 		<li>It's optional to use. You may don't need it for small projects.</li>
 		</ul>
 		<p class="smaller">Note: <a href="https://developers.google.com/web-toolkit/doc/latest/DevGuideCodeSplitting" target="_blank">The idea is from Google's GWT</a>. A Google developer also recently implemented a similar system for AMD-style modules: <a href="https://github.com/google/module-server" target="_blank">google/module-server</a>, but it depends on a server-side component.</p>
-		<p class="smaller">I've some slides with more details on my output format. Use the down array (&darr;) to navigate to them or use the DETAILS button on the right side.</p>
+		<p class="smaller jmpress-only">I've some slides with more details on my output format. Use the down array (&darr;) to navigate to them or use the DETAILS button on the right side.</p>
 
 		<section id="existing-output-format">
 			<h1>Existing output formats</h1>
@@ -667,6 +668,180 @@ module.exports = function(js) {
 		</section>
 	</section>
 
+	<section id="comparison">
+		<h1>Comparison to other module systems</h1>
+		<p>I'm not alone. There are multiple other module systems out there.</p>
+		<p>Here are the three top points I do better than others:</p>
+		<ul>
+		<li>Code Splitting</li>
+		<li>Support of CommonJS and AMD</li>
+		<li>Configuration</li>
+		</ul>
+		<div class="browserify-on">
+			<p>On the next slide you'll find a comparision to browserify.</p>
+			<p class="requirejs-on">After that comparision you'll also find a comparision to require.js.</p>
+		</div>
+		<div class="browserify-off">
+			<p class="requirejs-on">On the next slide you'll find a comparision to require.js.</p>
+		</div>
+	</section>
+
+	<section id="comparison-browserify">
+		<h1>Comparison to browserify</h1>
+		<table class="compare">
+		<thead><tr><th>browserify</th><th>webpack</th></tr></thead>
+		<tbody>
+			<tr>
+				<td class="">only CommonJS sync require</td>
+				<td class="plus">also AMD-style require</td>
+			</tr>
+			<tr>
+				<td class="">single bundle</td>
+				<td class="plus">Code Splitting</td>
+			</tr>
+			<tr>
+				<td class="">&mdash;</td>
+				<td class="plus">many kinds of expressions in <code>require</code></td>
+			</tr>
+			<tr>
+				<td class="">plugins</td>
+				<td class="">loaders</td>
+			</tr>
+			<tr>
+				<td class="plus">good replacements for node.js buildin libaries</td>
+				<td class="">some replacements for node.js buildin libaries</td>
+			</tr>
+			<tr>
+				<td class="">include some path info</td>
+				<td class="plus">don't include path info</td>
+			</tr>
+			<tr>
+				<td class="">replacements by alias option</td>
+				<td class="plus">by alias option, extension, folder or postfix</td>
+			</tr>
+			<tr>
+				<td class="plus">multiple entry points possible</td>
+				<td class="">only one entry point</td>
+			</tr>
+			<tr>
+				<td class="">no minimize</td>
+				<td class="plus">minimize with uglify</td>
+			</tr>
+			<tr>
+				<td class="minus">~ 4.5kb overhead</td>
+				<td class="plus">~ 300b overhead</td>
+			</tr>
+		</tbody>
+		</table>
+		<p><a href="https://github.com/webpack/webpack/wiki/Comparison" target="_black">&rarr; Details</a></p>
+		<p class="smaller">no guarantee for correctness</p>
+	</section>
+
+	<section id="comparison-requirejs">
+		<h1>Comparison to require.js</h1>
+		<table class="compare">
+		<thead><tr><th>require.js</th><th>webpack</th></tr></thead>
+		<tbody>
+			<tr>
+				<td class="">only AMD-style require and wrapped sync require</td>
+				<td class="plus">also CommonJS sync require</td>
+			</tr>
+			<tr>
+				<td class="">request per file* or single bundle**</td>
+				<td class="plus">Code Splitting</td>
+			</tr>
+			<tr>
+				<td class="plus">any expression in async <code>require</code>*</td>
+				<td class="">many kinds of expressions in <code>require</code></td>
+			</tr>
+			<tr>
+				<td class="">no replacements for node.js buildin libaries</td>
+				<td class="plus">some replacements for node.js buildin libaries</td>
+			</tr>
+			<tr>
+				<td class="">include some path info</td>
+				<td class="plus">don't include path info</td>
+			</tr>
+			<tr>
+				<td class="">replacements by config option</td>
+				<td class="plus">by alias option, extension, folder or postfix</td>
+			</tr>
+			<tr>
+				<td class="plus">requires modules from any web path*</td>
+				<td class="">only modules from filesystem</td>
+			</tr>
+			<tr>
+				<td class="plus">minimize with uglify or closure compiler**</td>
+				<td class="">minimize with uglify</td>
+			</tr>
+			<tr>
+				<td class="minus">~ 14.5kb overhead</td>
+				<td class="plus">~ 300b overhead</td>
+			</tr>
+		</tbody>
+		</table>
+		<p><a href="https://github.com/webpack/webpack/wiki/Comparison" target="_black">&rarr; Details</a></p>
+		<p>* unoptimized</p>
+		<p>** optimized</p>
+		<p class="smaller">no guarantee for correctness</p>
+	</section>
+
+	<section id="usage-cli">
+		<h1>Usage (CLI)</h1>
+		<p>Using me is very easy. I assume that you have node.js installed.</p>
+		<p>You can install the cli:</p>
+		<pre><code>npm install webpack -g</code></pre>
+		<p>Typing <code>webpack</code> will show the possible options for the cli.</p>
+		<p>Compiling is so easy:</p>
+		<pre><code>webpack entryFile.js outputBundle.js</code></pre>
+		<p>A bit cooler is it with some options
+		<pre><code>webpack entryFile.js outputBundle.js --watch --colors --progress</code></pre>
+		<p>That recompiles on change, prints status information and with colorful output. It automatically caches unchanged files.</p>
+	</section>
+
+	<section id="usage-node">
+		<h1>Usage (node.js)</h1>
+		<p>You can also use me from your node.js code.</p>
+		<pre><code class="language-javascript">var webpack = require("webpack");
+webpack(__dirname, "./entryFile", {
+	output: "outputBundle.js",
+	outputDirectory: __dirname
+	// add more options here... (see README)
+}, function(err, stats) {
+	// ...
+});</code></pre>
+	</section>
+
+	<section id="dev-tools">
+		<h1>Dev Tools</h1>
+		<p>Because I know that dev tools are very important, there are some dev tools availible:</p>
+		<p class="smaller">More details on the next slides.</p>
+		<ul>
+		<li><code>--debug</code> or <code>debug:true</code>: Emits stuff for debugging support. Try Chrome Dev Tools or Firebug.</li>
+		<li><code>webpack-dev-middleware</code>: middleware for express.</li>
+		<li><code>webpack-dev-server</code>: express server with auto-refresh.</li>
+		<li><code>webpack-graph</code>: visualize your dependency graph as svg.</li>
+		</ul>
+	</section>
+
+	<section id="dev-tool-middleware">
+		<h1>Dev Tool: express middleware</h1>
+		<p>The dev-middleware can be used in development combined with my watch mode.</p>
+		<ul>
+		<li>Compilation in memory. No file write access.</li>
+		<li>Requests block until compilation is done. You'll ever use the newest bundle.</li>
+		</ul>
+		<p>It seem to be very simple, but is very useful!</p>
+		<p>You'll find <a href="https://github.com/webpack/webpack-dev-middleware" target="_black">webpack-dev-middleware here</a>.</p>
+	</section>
+
+	<section id="dev-tool-server">
+		<h1>Dev Tool: webpack express server</h1>
+		<p>The dev-server uses the dev-middleware to serve a compiled webpack bundle. It also forwards some events emitted by me to the browser, which updates the page or display errors.</p>
+		<p>Very cool. Just leave a browser window open. It will reflect changes made automatically.</p>
+		<p>You'll find <a href="https://github.com/webpack/webpack-dev-server" target="_black">webpack-dev-server here</a>.</p>
+	</section>
+
 	<section id="rich-list">
 		<h1>Rich list of more features</h1>
 		<ul>
@@ -685,10 +860,6 @@ module.exports = function(js) {
 	<section id="">
 		<h1>WIP</h1>
 		<ul>
-		<li>compare to browserify</li>
-		<li>compare to require.js</li>
-		<li>Usage</li>
-		<li>Dev Tools</li>
 		<li>jade usage</li>
 		<li>less usage</li>
 		<li>coffeescript usage</li>
