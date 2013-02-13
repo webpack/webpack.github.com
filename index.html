@@ -367,7 +367,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 
 		<section id="existing-output-format">
 			<h1>Existing output formats</h1>
-			<p>Other module system/bundler emit much code into the output file for path resolution logic:</p>
+			<p>Other module systems/bundler emit much code into the output file for path resolution logic:</p>
 			<p class="smaller">i. e. modules-webmake</p>
 			<pre class="language-javascript"><code>// some lines of the modules system
 // many lines of the path resolution logic
@@ -430,26 +430,25 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 			<h3>Contra</h3>
 			<ul>
 			<li>Complexer compilation.</li>
-			<li>Source are modified (a little bit). Comments? Source Maps?</li>
+			<li>Source is modified (a little bit). Comments? Source Maps?</li>
 			<li><code>module.id</code> is not longer a string, but a number.</li>
 		</section>
 
 		<section id="webpack-overhead">
-			<pre class="language-javascript"><code>(function(modules) { /* No space for comments... */
+			<pre class="language-javascript"><code>(function(modules) { /* Sorry, no space for comments... */
     var installedModules = {};
     function require(moduleId) {
-        if(typeof moduleId !== "number")
-            throw new Error("Cannot find module '"+moduleId+"'");
         if(installedModules[moduleId])
             return installedModules[moduleId].exports;
         var module = installedModules[moduleId] =
             { exports: {}, id: moduleId, loaded: false };
-        modules[moduleId](module, module.exports, require);
-        module.loaded = true;    return module.exports;
+        modules[moduleId].call(null, module, module.exports, require);
+        module.loaded = true;
+		return module.exports;
     }
-    require.e = function(chunkId, callback) {
+    require.e = function requireEnsure(chunkId, callback) {
         callback(require);
-    }; // require.ensure, don't care for it now.
+    }; // chunk loading, don't care for it now.
     require.modules = modules;
     require.cache = installedModules;
     return require(0);
@@ -482,13 +481,13 @@ require.ensure(["c"], function(require) {
     require("b").xyz();
     var d = require("d");
 });</code></pre>
-		<p class="smaller">File/Chunk 1: <code>web.js</code></p>
+		<p class="smaller">File/Chunk 1: <code>bundle.js</code></p>
 		<ul>
 		<li>code of that file</li>
 		<li>code of module a and dependencies</li>
 		<li>code of module b and dependencies</li>
 		</ul>
-		<p class="smaller">File/Chunk 2: <code>1.web.js</code> (loaded when calling <code>require.ensure</code>)</p>
+		<p class="smaller">File/Chunk 2: <code>1.bundle.js</code> (loaded when calling <code>require.ensure</code>)</p>
 		<ul>
 		<li>code of module c and dependencies (but code is not used)</li>
 		<li>code of module d and dependencies</li>
@@ -609,16 +608,16 @@ module.exports = function(js) {
 	</section>
 
 	<section id="included-loaders">
-		<h1>Included loaders</h1>
-		<p>I come with some loaders included:</p>
+		<h1>Some loader examples</h1>
+		<p>Here is a small part of <a href="https://github.com/webpack/docs/wiki/loader-list" target="_black">this loaders list</a>:</p>
 		<ul>
-		<li>Utilities: <code>raw</code>, <code>script</code>, <code>file</code>, <code>bundle</code>, <code>val</code></li>
-		<li>Styling: <code>css</code>, <code>style</code>, <code>less</code></li>
+		<li>Basic: <code>json</code>, <code>raw</code>, <code>worker</code> (WebWorker)</li>
+		<li>Styling: <code>css</code>, <code>less</code>, <code>style</code></li>
 		<li>Templates: <code>jade</code></li>
-		<li>Languages: <code>json</code>, <code>coffee</code></li>
+		<li>Languages: <code>coffee</code></li>
+		<li>Support: <code>mocha</code>, <code>jshint</code></li>
 		</ul>
-		<p>Some of them are bound to file extensions by default.</p>
-		<p>There are more loaders which are not included by default on <a href="https://github.com/webpack/webpack/wiki/Loaders" target="_black">this list</a>.</p>
+		<p>Some of them may be bound to file extensions if you choose to.</p>
 		<p>Feel free to write your own loaders.</p>
 		<p>If you open source your own loaders consider adding them to the list.</p>
 	</section>
@@ -639,13 +638,13 @@ module.exports = function(js) {
 		<li>It is possible to use loaders with contexts.</li>
 		<li>In the most cases contexts are transparent for the developer und just work.</li>
 		<li>Limitation: It is assumed that non-compile-time-constant parts do not contain any <code>"/../"</code>.</li>
-		<li>Common Problem: The complete directory is included. This may not be your intent.</li>
+		<li>Common Problem: Maybe to many files are included. This may not be your intent.</li>
 		<li>The <code>?:</code>-operation do not create a context.</li>
 		<li>Copying the require function into another variable creates a context for the current directory.
 			<ul><li>There is a warning in this case.</li></ul>
 		</li>
 		<li>Files with errors are not included. There is a warning in this case.</li>
-		<li>You can create a context also with <code>require.context(path: string)</code>.
+		<li>You can create a context also with <code>require.context(path, recursive, regExp)</code>.
 			<ul>
 			<li>It return a function to require from that folder.</li>
 			<li>The function has a method <code>.keys()</code> returning all possible parameters.</li>
@@ -720,12 +719,12 @@ module.exports = function(js) {
 				<td class="plus">by alias option, extension, folder or postfix</td>
 			</tr>
 			<tr>
-				<td class="plus">multiple entry points possible</td>
-				<td class="">only one entry point</td>
+				<td class="">multiple entry points possible</td>
+				<td class="">multiple entry points possible</td>
 			</tr>
 			<tr>
 				<td class="">no minimize</td>
-				<td class="plus">minimize with uglify</td>
+				<td class="plus">minimize with uglifyjs</td>
 			</tr>
 			<tr>
 				<td class="minus">~ 4.5kb overhead</td>
@@ -771,8 +770,8 @@ module.exports = function(js) {
 				<td class="">only modules from filesystem</td>
 			</tr>
 			<tr>
-				<td class="plus">minimize with uglify or closure compiler**</td>
-				<td class="">minimize with uglify</td>
+				<td class="plus">minimize with uglifyjs or closure compiler**</td>
+				<td class="">minimize with uglifyjs</td>
 			</tr>
 			<tr>
 				<td class="minus">~ 14.5kb overhead</td>
@@ -793,20 +792,41 @@ module.exports = function(js) {
 		<pre><code>npm install webpack -g</code></pre>
 		<p>Typing <code>webpack</code> will show the possible options for the cli.</p>
 		<p>Compiling is so easy:</p>
-		<pre><code>webpack entryFile.js outputBundle.js</code></pre>
+		<pre><code>webpack ./entryFile.js outputBundle.js</code></pre>
 		<p>A bit cooler is it with some options
-		<pre><code>webpack entryFile.js outputBundle.js --watch --colors --progress</code></pre>
+		<pre><code>webpack ./entryFile.js outputBundle.js --watch --colors --progress --cache</code></pre>
 		<p>That recompiles on change, prints status information and with colorful output. It automatically caches unchanged files.</p>
+	</section>
+
+	<section id="usage-config">
+		<h1>Usage (config)</h1>
+		<p>You may create a <code>webpack.config.js</code> file to specify your options. If you do so you can compile with:</p>
+		<pre><code>webpack</code></pre>
+		<p>The <code>webpack.config.js</code> file may look like this:</p>
+		<pre><code class="language-javascript">var path = require("path");
+module.exports = {
+	context: __dirname,   entry: "./entryFile.js",
+	output: {
+		path: path.join(__dirname, "assets"),
+		publicPath: "http://cdn.example.com/assets/",
+		filename: "[hash].bundle.js" },
+	cache: true
+};</code></pre>
 	</section>
 
 	<section id="usage-node">
 		<h1>Usage (node.js)</h1>
 		<p>You can also use me from your node.js code.</p>
 		<pre><code class="language-javascript">var webpack = require("webpack");
-webpack(__dirname, "./entryFile", {
-	output: "outputBundle.js",
-	outputDirectory: __dirname
-	// add more options here... (see README)
+webpack({
+	context: __dirname,
+	entry: "./entryFile.js",
+	output: {
+		path: path.join(__dirname, "assets"),
+		publicPath: "http://cdn.example.com/assets/",
+		filename: "[hash].bundle.js"
+	},
+	cache: true
 }, function(err, stats) {
 	// ...
 });</code></pre>
@@ -817,10 +837,11 @@ webpack(__dirname, "./entryFile", {
 		<p>Because I know that dev tools are very important, there are some dev tools availible:</p>
 		<p class="smaller">More details on the next slides.</p>
 		<ul>
-		<li><code>--debug</code> or <code>debug:true</code>: Emits stuff for debugging support. Try Chrome Dev Tools or Firebug.</li>
+		<li><code>--debug</code> or <code>debug:true</code>: Switch loaders into debug mode. (i. e. the jade loader includes line numbers and the source code for good error messages)</li>
+		<li><code>--devtool eval</code> or <code>devtool:"eval"</code>: Emits <code>//@ SourceURL</code> comments for debugging support. Try Chrome Dev Tools (or Firebug).</li>
 		<li><code>webpack-dev-middleware</code>: middleware for express.</li>
 		<li><code>webpack-dev-server</code>: express server with auto-refresh.</li>
-		<li><code>webpack-graph</code>: visualize your dependency graph as svg.</li>
+		<!--<li><code>webpack-graph</code>: visualize your dependency graph as svg.</li>-->
 		</ul>
 	</section>
 
@@ -852,13 +873,14 @@ webpack(__dirname, "./entryFile", {
 		<li>I can <strong>cache</strong> previous module results to support faster re-compilation.</li>
 		<li>I have some browser replacement for <strong>node.js buildin libaries</strong> included.</li>
 		<li>You have various options to apply <strong>browser replacements</strong> for anything.</li>
-		<li>I emit <strong>events</strong> in the progress of the compilation.</li>
-		<li>I can use <strong>worker processes</strong> for compilation.</li>
+		<li>I have a rich plugin system to enhance me with your custom stuff.</li>
+		<li>I can compile multiple entry points with shared chunks for multiple page apps.</li>
 		</ul>
 	</section>
 
 	<section id="">
 		<h1>WIP</h1>
+		<p>These webpack features are WIP on this presentation</p>
 		<ul>
 		<li>jade usage</li>
 		<li>less usage</li>
