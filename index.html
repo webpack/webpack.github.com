@@ -707,8 +707,8 @@ module.exports = function(js) {
 				<td class="">loaders</td>
 			</tr>
 			<tr>
-				<td class="plus">good replacements for node.js buildin libaries</td>
-				<td class="">some replacements for node.js buildin libaries</td>
+				<td class="plus">replacements for node.js buildin libaries</td>
+				<td class="">replacements for node.js buildin libaries</td>
 			</tr>
 			<tr>
 				<td class="">include some path info</td>
@@ -716,19 +716,15 @@ module.exports = function(js) {
 			</tr>
 			<tr>
 				<td class="">replacements by alias option</td>
-				<td class="plus">by alias option, extension, folder or postfix</td>
-			</tr>
-			<tr>
-				<td class="">multiple entry points possible</td>
-				<td class="">multiple entry points possible</td>
+				<td class="plus">by alias option, extension or folder</td>
 			</tr>
 			<tr>
 				<td class="">no minimize</td>
 				<td class="plus">minimize with uglifyjs</td>
 			</tr>
 			<tr>
-				<td class="minus">~ 4.5kb overhead</td>
-				<td class="plus">~ 300b overhead</td>
+				<td class="plus">~ 220b overhead (+ 25b per module)</td>
+				<td class="plus">~ 240b overhead (+ 19b per module)</td>
 			</tr>
 		</tbody>
 		</table>
@@ -755,7 +751,7 @@ module.exports = function(js) {
 			</tr>
 			<tr>
 				<td class="">no replacements for node.js buildin libaries</td>
-				<td class="plus">some replacements for node.js buildin libaries</td>
+				<td class="plus">replacements for node.js buildin libaries</td>
 			</tr>
 			<tr>
 				<td class="">include some path info</td>
@@ -763,7 +759,7 @@ module.exports = function(js) {
 			</tr>
 			<tr>
 				<td class="">replacements by config option</td>
-				<td class="plus">by alias option, extension, folder or postfix</td>
+				<td class="plus">by alias option, extension or folder</td>
 			</tr>
 			<tr>
 				<td class="plus">requires modules from any web path*</td>
@@ -774,8 +770,8 @@ module.exports = function(js) {
 				<td class="">minimize with uglifyjs</td>
 			</tr>
 			<tr>
-				<td class="minus">~ 14.5kb overhead</td>
-				<td class="plus">~ 300b overhead</td>
+				<td class="minus">~ 14.5kb overhead (+ 19b per module)</td>
+				<td class="plus">~ 240b overhead (+ 19b per module)</td>
 			</tr>
 		</tbody>
 		</table>
@@ -874,7 +870,7 @@ webpack({
 		<li>I have some browser replacement for <strong>node.js buildin libaries</strong> included.</li>
 		<li>You have various options to apply <strong>browser replacements</strong> for anything.</li>
 		<li>I have a rich plugin system to enhance me with your custom stuff.</li>
-		<li>I can compile multiple entry points with shared chunks for multiple page apps.</li>
+		<li>I can compile multiple entry points with shared chunks for multi page apps.</li>
 		</ul>
 	</section>
 
