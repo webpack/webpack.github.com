@@ -835,6 +835,7 @@ webpack({
 		<ul>
 		<li><code>--debug</code> or <code>debug:true</code>: Switch loaders into debug mode. (i. e. the jade loader includes line numbers and the source code for good error messages)</li>
 		<li><code>--devtool eval</code> or <code>devtool:"eval"</code>: Emits <code>//@ SourceURL</code> comments for debugging support. Try Chrome Dev Tools (or Firebug).</li>
+		<li><code>--devtool source-map</code> or <code>devtool:"source-map"</code>: Emits a SourceMap for debugging support. Try Chrome Dev Tools.</li>
 		<li><code>webpack-dev-middleware</code>: middleware for express.</li>
 		<li><code>webpack-dev-server</code>: express server with auto-refresh.</li>
 		<!--<li><code>webpack-graph</code>: visualize your dependency graph as svg.</li>-->
@@ -857,6 +858,19 @@ webpack({
 		<p>The dev-server uses the dev-middleware to serve a compiled webpack bundle. It also forwards some events emitted by me to the browser, which updates the page or display errors.</p>
 		<p>Very cool. Just leave a browser window open. It will reflect changes made automatically.</p>
 		<p>You'll find <a href="https://github.com/webpack/webpack-dev-server" target="_black">webpack-dev-server here</a>.</p>
+	</section>
+
+	<section id="hot-code-replacement">
+		<h1>Hot Code Replacement <small>(experimental)</small></h1>
+		<p>Some cool tools live reload stylesheet when they changed. I can hot replace any module <strong>without</strong> reloading the whole page.</p>
+		<p>This is not only a nice development feature, you can even use this in <strong>production</strong> to deliver updates.</p>
+		<ul>
+		<li>You store some info about your last build in a JSON file.</li>
+		<li>I emit Hot Update Chunks which contain the update. I'll code-split the update too.</li>
+		<li>You need to opt-in at some points of you code base (like with Code Splitting).</li>
+		<li>You need to insert some management code to define when to check of updates.</li>
+		<li>It come at some cost: It requires a bigger bundle overhead.</li>
+		</ul>
 	</section>
 
 	<section id="rich-list">
