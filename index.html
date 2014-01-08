@@ -204,7 +204,7 @@
 			<li>Do you know <code>node.js</code>? I hope so. Elsewise read <a href="http://nodejs.org" target="_blank">nodejs.org</a>.</li>
 			<li>Do you know <code>CommonJS</code> and <code>AMD</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#module-system-style" data-goto="#existing-module-systems" data-class="commonjs"/>. Elsewise I've some slides for you.</li>
 			<li>Do you know <code>browserify</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#comparison-browserify" data-goto="#comparison-requirejs" data-class="browserify" data-invert="yes" checked="checked"/>. I'll show you the differences.</li>
-			<li>Do you know <code>require.js</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#comparison-requirejs" data-goto="#usage-cli" data-class="requirejs" data-invert="yes" checked="checked"/>. I'll compare it with me to.</li>
+			<li>Do you know <code>require.js</code>? <input type="checkbox" class="jmpress-choose-route" data-slice="#comparison-requirejs" data-goto="#usage-cli" data-class="requirejs" data-invert="yes" checked="checked"/>. I'll compare it with me too.</li>
 			<!--
 			<li>Do you know <code>jade</code> templating language? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="jade" checked="checked"/>. I'll show you how to use it with me.</li>
 			<li>Do you know <code>less</code> stylesheets? <input type="checkbox" class="jmpress-choose-route" data-slice="#xxx" data-goto="#xxx" data-class="less" checked="checked"/>. I'll explain why you can use it with just one line.</li>
@@ -238,12 +238,12 @@
 		<ul>
 		<li>More and more javascript is in a page.</li>
 		<li>One can do more stuff in modern browsers.</li>
-		<li>Less full page reloads &rarr; even more code in a page.</li>
+		<li>Fewer full page reloads &rarr; even more code in a page.</li>
 		</ul>
 		<p>&rarr; Much code on client side!</p>
 		<h2>Module system</h2>
-		<p>A big code base need to be organized!</p>
-		<p>Module systems offer mechanism to split your code base into modules.</p>
+		<p>A big code base needs to be organized!</p>
+		<p>Module systems offers a mechanism to split your code base into modules.</p>
 	</section>
 
 	<section id="module-system-style">
@@ -263,7 +263,7 @@
 &lt;script src="module2.js"&gt;&lt;/script&gt;
 &lt;script src="libaryA.js"&gt;&lt;/script&gt;
 &lt;script src="module3.js"&gt;&lt;/script&gt;</code></pre>
-		<p>Modules export a interface to the global object, i. e. <code>window</code>.</p>
+		<p>Modules export an interface to the global object, i. e. <code>window</code>.</p>
 		<h3>Common problems:</h3>
 		<ul>
 		<li>Conflicts in the global object</li>
@@ -524,7 +524,7 @@ require.ensure(["c"], function(require) {
 
 	<section id="only-js">
 		<h1>Why only javascript?</h1>
-		<p>Why should I only help you with javascript? There are so much more static resources:</p>
+		<p>Why should I only help you with javascript? There are so many more static resources:</p>
 		<ul>
 		<li>stylesheets</li>
 		<li>images</li>
@@ -557,16 +557,16 @@ require("./image.png");</code></pre>
 
 	<section id="loaders">
 		<h1>Loaders</h1>
-		<p>"Ok cool, but what is the technique behind it?"</p>
+		<p>"Ok cool, but what's the technique behind it?"</p>
 		<p>It's called <strong>loaders</strong>.</p>
 		<p>A loader...</p>
 		<ul>
-		<li>... is a javascript function preprocessing a file.</li>
+		<li>... is a javascript function that preprocesses a file.</li>
 		<li>... is running in <code>node.js</code>, so possibilities are endless.</li>
 		<li>... can be piped together with other loaders, but the last loader should emit javascript.</li>
 		<li>... can opt-in for optional execution in a seperate process (cpu-heavy stuff).</li>
 		<li>... can be passed options.</li>
-		<li>... can be published/installed though <code>npm</code>.</li>
+		<li>... can be published / installed though <code>npm</code>.</li>
 		<li>... can be asynchronous.</li>
 		<li>... can be bound to extensions/RegExps.</li>
 		<li>... can emit files.</li>
@@ -626,27 +626,27 @@ module.exports = function(js) {
 		<h1>Dynamic require</h1>
 		<p>So now all is javascript. So I can show you more of mine javascript features.</p>
 		<pre class="language-javascript"><code>return require("./template/" + templateName + ".jade");</code></pre>
-		<p>Module bundlers do a static code analysis to get dependencies before executing. But this code fragment includes a variable (not compile-time constant). Does the static code analysis fails here?</p>
+		<p>Module bundlers do a static code analysis to get dependencies before executing. But this code fragment includes a variable (not compile-time constant). Does the static code analysis fail here?</p>
 		<p class="smaller browserify-on">Note: browserify simply ignore the require and hopes that the files are in the bundle. Because in most cases they are not, you need to force including.</p>
 		<p class="smaller requirejs-on">Note: require.js TODO check how exactly require.js fails on this.</p>
 	</section>
 
 	<section id="context">
 		<h1>Context</h1>
-		<p>I handle this cases with a special mechanism I call "context". All files matching the require are included in the bundle and I find the actual referenced file on runtime.</p>
+		<p>I handle this cases with a special mechanism I call "context". All files matching the require are included in the bundle and I find the actual referenced file at runtime.</p>
 		<ul>
 		<li>It is possible to use loaders with contexts.</li>
-		<li>In the most cases contexts are transparent for the developer und just work.</li>
+		<li>In the most cases contexts are transparent for the developer and just work.</li>
 		<li>Limitation: It is assumed that non-compile-time-constant parts do not contain any <code>"/../"</code>.</li>
-		<li>Common Problem: Maybe to many files are included. This may not be your intent.</li>
-		<li>The <code>?:</code>-operation do not create a context.</li>
+		<li>Common Problem: Maybe too many files are included. This may not be your intent.</li>
+		<li>The <code>?:</code>-operation does not create a context.</li>
 		<li>Copying the require function into another variable creates a context for the current directory.
 			<ul><li>There is a warning in this case.</li></ul>
 		</li>
 		<li>Files with errors are not included. There is a warning in this case.</li>
 		<li>You can create a context also with <code>require.context(path, recursive, regExp)</code>.
 			<ul>
-			<li>It return a function to require from that folder.</li>
+			<li>It returns a function to require from that folder.</li>
 			<li>The function has a method <code>.keys()</code> returning all possible parameters.</li>
 			</ul>
 		</li>
@@ -707,12 +707,12 @@ module.exports = function(js) {
 				<td class="">loaders</td>
 			</tr>
 			<tr>
-				<td class="plus">replacements for node.js buildin libaries</td>
-				<td class="">replacements for node.js buildin libaries</td>
+				<td class="plus">replacement for node.js built-in libaries</td>
+				<td class="">replacement for node.js built-in libaries</td>
 			</tr>
 			<tr>
-				<td class="">include some path info</td>
-				<td class="plus">don't include path info</td>
+				<td class="">includes some path info</td>
+				<td class="plus">doesn't include path info</td>
 			</tr>
 			<tr>
 				<td class="">replacements by alias option</td>
@@ -750,12 +750,12 @@ module.exports = function(js) {
 				<td class="">many kinds of expressions in <code>require</code></td>
 			</tr>
 			<tr>
-				<td class="">no replacements for node.js buildin libaries</td>
-				<td class="plus">replacements for node.js buildin libaries</td>
+				<td class="">no replacements for node.js built-in libaries</td>
+				<td class="plus">replacements for node.js built-in libaries</td>
 			</tr>
 			<tr>
-				<td class="">include some path info</td>
-				<td class="plus">don't include path info</td>
+				<td class="">includes some path info</td>
+				<td class="plus">doesn't include path info</td>
 			</tr>
 			<tr>
 				<td class="">replacements by config option</td>
@@ -847,9 +847,9 @@ webpack({
 		<p>The dev-middleware can be used in development combined with my watch mode.</p>
 		<ul>
 		<li>Compilation in memory. No file write access.</li>
-		<li>Requests block until compilation is done. You'll ever use the newest bundle.</li>
+		<li>Requests block until compilation is done. You'll always use the newest bundle.</li>
 		</ul>
-		<p>It seem to be very simple, but is very useful!</p>
+		<p>It seems to be very simple, but it's very useful!</p>
 		<p>You'll find <a href="https://github.com/webpack/webpack-dev-middleware" target="_black">webpack-dev-middleware here</a>.</p>
 	</section>
 
@@ -862,7 +862,7 @@ webpack({
 
 	<section id="hot-code-replacement">
 		<h1>Hot Code Replacement <small>(experimental)</small></h1>
-		<p>Some cool tools live reload stylesheet when they changed. I can hot replace any module <strong>without</strong> reloading the whole page.</p>
+		<p>Some cool tools live reload stylesheets when they're changed. I can hot replace any module <strong>without</strong> reloading the whole page.</p>
 		<p>This is not only a nice development feature, you can even use this in <strong>production</strong> to deliver updates.</p>
 		<ul>
 		<li>You store some info about your last build in a JSON file.</li>
@@ -881,7 +881,7 @@ webpack({
 		<li>There is a <strong>grunt</strong> task (<code>grunt-webpack</code>) to include me in your build process.</li>
 		<li>I have <strong>many config options</strong>. You can customize me to fit to your imagination.</li>
 		<li>I can <strong>cache</strong> previous module results to support faster re-compilation.</li>
-		<li>I have some browser replacement for <strong>node.js buildin libaries</strong> included.</li>
+		<li>I have some browser replacements for <strong>node.js built-in libaries</strong> included.</li>
 		<li>You have various options to apply <strong>browser replacements</strong> for anything.</li>
 		<li>I have a rich plugin system to enhance me with your custom stuff.</li>
 		<li>I can compile multiple entry points with shared chunks for multi page apps.</li>
