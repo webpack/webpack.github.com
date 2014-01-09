@@ -67,7 +67,7 @@
 					lastTime = new Date();
 					if(time > 3000) {
 						ga('send', 'pageview', {
-							page: window.location.protocol + '//' + window.location.hostname + "/?" + step.attr("id"),
+							page: window.location.protocol + '//' + window.location.hostname + "/?slide=" + step.attr("id"),
 							title: slide
 						});
 						ga('send', 'timing', 'Slide View', slide, time);
