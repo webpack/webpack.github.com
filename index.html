@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 
-	<title>webpack module system</title>
+	<title>webpack module bundler</title>
 
 	<meta name="author" content="Tobias Koppers" />
 	<meta name="viewport" content="width=device-width, maximum-scale=1.0, initial-scale=1.0, user-scalable=no" />
@@ -179,16 +179,11 @@
 </head>
 <body>
 
-<div class="global-wip">
-	<h1>Work In Progress</h1>
-	<p>While <code>webpack</code> is some kind of mature, this presentation is wip!</p>
-</div>
-
 <article data-template="main">
 
 	<section id="home">
 		<center><a href="https://github.com/webpack/webpack"><img src="assets/logo.png" /></a></center>
-		<p>Hi, I'm a <strong>module system</strong> for the browser.</p>
+		<p>Hi, I'm a <strong>module bundler</strong>.</p>
 		<p>You like to get know me? I'll tell you more.</p>
 		<p data-jmpress="fade after 700ms step" class="jmpress-only">You can navigate through this website with</p>
 		<ul class="jmpress-only">
@@ -315,7 +310,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 	</section>
 
 	<section id="existing-module-systems">
-		<h1>Existing module systems</h1>
+		<h1>Existing module systems/bundlers</h1>
 		<h3>CommonJS</h3>
 		<ul>
 		<li><a target="_blank" href="http://nodejs.org">node.js</a> - only server-side</li>
@@ -371,7 +366,7 @@ define("mymodule", ["dep1", "dep2"], function(d1, d2) { /*...*/ });</code></pre>
 
 		<section id="existing-output-format">
 			<h1>Existing output formats</h1>
-			<p>Other module systems/bundler emit much code into the output file for path resolution logic:</p>
+			<p>Other module systems/bundlers emit much code into the output file for path resolution logic:</p>
 			<p class="smaller">i. e. modules-webmake</p>
 			<pre class="language-javascript"><code>// some lines of the modules system
 // many lines of the path resolution logic
@@ -511,17 +506,17 @@ require.ensure(["c"], function(require) {
 
 		<section id="output-format-chunk">
 			<h1>Output format of a chunk</h1>
-			<pre class="language-javascript"><code>webpackJsonp(1 /* chunk id */, {
+			<pre class="language-javascript"><code>webpackJsonp([1 /* chunk id */], {
     3: function(module, exports, require) { /* the module */ },
     4: function(module, exports, require) { /* the module */ },
     6: function(module, exports, require) { /* the module */ },
 	/* ... */
 })</code></pre>
 			<p>which minimizes great:</p>
-			<pre class="language-javascript"><code>webpackJsonp(1,{3:function(a,b,c){},4:function(a,b,c){},/* ... */})</code></pre>
+			<pre class="language-javascript"><code>webpackJsonp([1],{3:function(a,b,c){},4:function(a,b,c){},/* ... */})</code></pre>
 			<h3>Contra</h3>
 			<ul>
-			<li>Mulitple instances of webpack module systems can conflict if they use the same JSONP-callback name. You can specify the callback name as option.</li>
+			<li>Multiple instances of the webpack module system can conflict if they use the same JSONP-callback name. You can specify the callback name as option.</li>
 			</ul>
 		</section>
 	</section>
@@ -568,8 +563,7 @@ require("./image.png");</code></pre>
 		<li>... is a javascript function that preprocesses a file.</li>
 		<li>... is running in <code>node.js</code>, so possibilities are endless.</li>
 		<li>... can be piped together with other loaders, but the last loader should emit javascript.</li>
-		<li>... can opt-in for optional execution in a seperate process (cpu-heavy stuff).</li>
-		<li>... can be passed options.</li>
+		<li>... can be passed options through configuration or query string.</li>
 		<li>... can be published / installed though <code>npm</code>.</li>
 		<li>... can be asynchronous.</li>
 		<li>... can be bound to extensions/RegExps.</li>
@@ -607,7 +601,7 @@ module.exports = function(js) {
 		done(null, header + js);
 	});
 }</code></pre>
-			<p><a href="https://github.com/webpack/webpack/wiki/Loader-Specification" target="_black">&rarr; Loader specification</a></p>
+			<p><a href="https://github.com/webpack/docs/wiki/loaders" target="_black">&rarr; loaders documentation</a></p>
 		</section>
 	</section>
 
@@ -672,8 +666,8 @@ module.exports = function(js) {
 	</section>
 
 	<section id="comparison">
-		<h1>Comparison to other module systems</h1>
-		<p>I'm not alone. There are multiple other module systems out there.</p>
+		<h1>Comparison to other module systems/bundlers</h1>
+		<p>I'm not alone. There are multiple other module systems/bundlers out there.</p>
 		<p>Here are the three top points I do better than others:</p>
 		<ul>
 		<li>Code Splitting</li>
@@ -732,7 +726,7 @@ module.exports = function(js) {
 			</tr>
 		</tbody>
 		</table>
-		<p><a href="https://github.com/webpack/webpack/wiki/Comparison" target="_black">&rarr; Details</a></p>
+		<p><a href="https://github.com/webpack/docs/wiki/webpack-comparison" target="_black">&rarr; Details</a></p>
 		<p class="smaller">no guarantee for correctness</p>
 	</section>
 
@@ -766,7 +760,7 @@ module.exports = function(js) {
 				<td class="plus">by alias option, extension or folder</td>
 			</tr>
 			<tr>
-				<td class="plus">requires modules from any web path*</td>
+				<td class="plus">requires modules from any web path</td>
 				<td class="">only modules from filesystem</td>
 			</tr>
 			<tr>
@@ -779,7 +773,7 @@ module.exports = function(js) {
 			</tr>
 		</tbody>
 		</table>
-		<p><a href="https://github.com/webpack/webpack/wiki/Comparison" target="_black">&rarr; Details</a></p>
+		<p><a href="https://github.com/webpack/docs/wiki/webpack-comparison" target="_black">&rarr; Details</a></p>
 		<p>* unoptimized</p>
 		<p>** optimized</p>
 		<p class="smaller">no guarantee for correctness</p>
@@ -865,7 +859,7 @@ webpack({
 	</section>
 
 	<section id="hot-code-replacement">
-		<h1>Hot Code Replacement <small>(experimental)</small></h1>
+		<h1>Hot Code Replacement</h1>
 		<p>Some cool tools live reload stylesheets when they're changed. I can hot replace any module <strong>without</strong> reloading the whole page.</p>
 		<p>This is not only a nice development feature, you can even use this in <strong>production</strong> to deliver updates.</p>
 		<ul>
@@ -888,7 +882,7 @@ webpack({
 		<li>I have some browser replacements for <strong>node.js built-in libaries</strong> included.</li>
 		<li>You have various options to apply <strong>browser replacements</strong> for anything.</li>
 		<li>I have a rich plugin system to enhance me with your custom stuff.</li>
-		<li>I can compile multiple entry points with shared chunks for multi page apps.</li>
+		<li>I can compile multiple entry points with shared + commons chunks for multi page apps.</li>
 		</ul>
 	</section>
 
@@ -907,6 +901,7 @@ webpack({
 		<li><a href="https://github.com/webpack/webpack/tree/master/examples/i18n">Localization</a></li>
 		<li><a href="https://github.com/webpack/webpack/tree/master/examples/component">component</a></li>
 		<li><a href="https://github.com/webpack/webpack/tree/master/examples/dedupe">Deduplication</a> and <a href="https://github.com/webpack/webpack/tree/master/examples/code-splitted-dedupe">with Code Splitting</a></li>
+		<li><a href="https://github.com/webpack/webpack/tree/master/examples/multiple-entry-points">Multiple entry points</a> and <a href="https://github.com/webpack/webpack/tree/master/examples/multiple-commons-chunks">with multiple commons chunks</a></li>
 		</ul>
 	</section>
 
